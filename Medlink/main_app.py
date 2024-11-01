@@ -7,9 +7,9 @@ import doctores
 import citas
 
 class MainApp(ctk.CTk):
-    def __init__(self):
+    def __init__(self,nombre):
         super().__init__()
-
+        self.nombre=nombre
         ctk.set_appearance_mode("system")
         ctk.set_default_color_theme("blue")
 
@@ -48,7 +48,7 @@ class MainApp(ctk.CTk):
         header_label = ctk.CTkLabel(header_frame, text="MedLink", font=("Arial", 24), text_color="white")
         header_label.place(relx=0.15, rely=0.5, anchor="center")
         
-        header_label = ctk.CTkLabel(header_frame, text="Inicio", font=("Arial", 34), text_color="white")
+        header_label = ctk.CTkLabel(header_frame, text=f"bienvenido(a) ,{self.nombre}", font=("Arial", 34), text_color="white")
         header_label.place(relx=0.5, rely=0.5, anchor="center")
 
         logo_label = ctk.CTkLabel(header_frame, image=self.logo_photo, text="")
