@@ -6,11 +6,17 @@ from tkinter import ttk, messagebox
 from datetime import datetime
 
 class Empleados(ctk.CTk):
+<<<<<<< HEAD
     def __init__(self,nombre):
         super().__init__()
         
         self.nombre=nombre
         
+=======
+    def __init__(self):
+        super().__init__()
+
+>>>>>>> main
         ctk.set_appearance_mode("system")
         ctk.set_default_color_theme("blue")
 
@@ -38,7 +44,11 @@ class Empleados(ctk.CTk):
     
     def back_to_main(self):
         self.destroy()
+<<<<<<< HEAD
         main_app.MainApp(self.nombre)
+=======
+        main_app.MainApp()
+>>>>>>> main
         
 
     def setup_widgets(self):
@@ -108,7 +118,10 @@ class Empleados(ctk.CTk):
                     tabla_empleado.insert("", "end", values=empleado)
                 break
             except Exception as e:
+<<<<<<< HEAD
                 messagebox.showerror("Error", "Al cargar datos")
+=======
+>>>>>>> main
                 print(f"Error al cargar empleados: {e}")
             
         tabla_empleado.pack(expand=True, fill="both")
@@ -227,7 +240,10 @@ class Empleados(ctk.CTk):
                     self.entryContrasena.delete(0, "end")
                     
             except Exception as e:
+<<<<<<< HEAD
                 messagebox.showerror("Error", "En la operacion")
+=======
+>>>>>>> main
                 print(f"Error al agregar empleado: {e}")
 
     

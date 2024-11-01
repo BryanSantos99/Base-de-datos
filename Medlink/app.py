@@ -2,8 +2,11 @@
 import customtkinter as ctk
 from PIL import Image, ImageTk
 import main_app
+<<<<<<< HEAD
 import conecta
 from tkinter import messagebox
+=======
+>>>>>>> main
 
 class LoginApp(ctk.CTk):
     def __init__(self):
@@ -27,6 +30,11 @@ class LoginApp(ctk.CTk):
         self.geometry(f"{window_width}x{window_height}+{center_x}+{center_y}")
         self.resizable(False, False)
 
+<<<<<<< HEAD
+=======
+        self.user = "admin"
+        self.correct_password = "12345"
+>>>>>>> main
 
         try:
             self.logo_image = Image.open("img/logo.png").resize((60, 60))
@@ -78,6 +86,7 @@ class LoginApp(ctk.CTk):
     def button_event(self):
         entered_password = self.psw_entry.get()
         entered_admin = self.usr_entry.get()
+<<<<<<< HEAD
         try:
             conn = conecta.conectar()
             cursor = conn.cursor()
@@ -104,6 +113,17 @@ class LoginApp(ctk.CTk):
     def open_main_app(self,n):
         self.destroy()
         mainApp = main_app.MainApp(n)
+=======
+        if entered_admin == self.user and entered_password == self.correct_password:
+            print("log in")
+            self.open_main_app()
+        else:
+            print("datos incorrectos")
+
+    def open_main_app(self):
+        self.destroy()
+        mainApp = main_app.MainApp()
+>>>>>>> main
         mainApp.mainloop()
 
     def cancel_event(self):

@@ -7,9 +7,15 @@ import doctores
 import citas
 
 class MainApp(ctk.CTk):
+<<<<<<< HEAD
     def __init__(self,nombre):
         super().__init__()
         self.nombre=nombre
+=======
+    def __init__(self):
+        super().__init__()
+
+>>>>>>> main
         ctk.set_appearance_mode("system")
         ctk.set_default_color_theme("blue")
 
@@ -48,7 +54,11 @@ class MainApp(ctk.CTk):
         header_label = ctk.CTkLabel(header_frame, text="MedLink", font=("Arial", 24), text_color="white")
         header_label.place(relx=0.15, rely=0.5, anchor="center")
         
+<<<<<<< HEAD
         header_label = ctk.CTkLabel(header_frame, text=f"bienvenido(a) ,{self.nombre}", font=("Arial", 34), text_color="white")
+=======
+        header_label = ctk.CTkLabel(header_frame, text="Inicio", font=("Arial", 34), text_color="white")
+>>>>>>> main
         header_label.place(relx=0.5, rely=0.5, anchor="center")
 
         logo_label = ctk.CTkLabel(header_frame, image=self.logo_photo, text="")
@@ -80,6 +90,7 @@ class MainApp(ctk.CTk):
     
     def abrir_pacientes(self):
         self.destroy()
+<<<<<<< HEAD
         pacientes.Pacientes(self.nombre)
         
     def abrir_empleados(self):
@@ -93,6 +104,21 @@ class MainApp(ctk.CTk):
     def abrir_citas(self):
         self.destroy()
         citas.Citas(self.nombre)
+=======
+        pacientes.Pacientes()
+        
+    def abrir_empleados(self):
+        self.destroy()
+        empleados.Empleados()
+    
+    def abrir_doctores(self):
+        self.destroy()
+        doctores.Doctores()
+        
+    def abrir_citas(self):
+        self.destroy()
+        citas.Citas()
+>>>>>>> main
         
 
 if __name__ == "__main__":

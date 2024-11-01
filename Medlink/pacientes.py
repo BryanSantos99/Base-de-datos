@@ -2,6 +2,7 @@ import customtkinter as ctk
 from PIL import Image, ImageTk
 import main_app
 import tkinter as tk
+<<<<<<< HEAD
 from tkinter import ttk ,messagebox
 import conecta
 from datetime import datetime
@@ -13,6 +14,16 @@ class Pacientes(ctk.CTk):
 
         self.nombre=nombre
         
+=======
+from tkinter import ttk
+import conecta
+
+
+class Pacientes(ctk.CTk):
+    def __init__(self):
+        super().__init__()
+
+>>>>>>> main
         ctk.set_appearance_mode("system")
         ctk.set_default_color_theme("blue")
 
@@ -36,7 +47,11 @@ class Pacientes(ctk.CTk):
         
     def back_to_main(self):
         self.destroy()
+<<<<<<< HEAD
         main_app.MainApp(self.nombre)
+=======
+        main_app.MainApp()
+>>>>>>> main
         
 
     def setup_widgets(self):
@@ -85,6 +100,7 @@ class Pacientes(ctk.CTk):
         
         
 
+<<<<<<< HEAD
         tabla_pacientes = ttk.Treeview(self.pacientes_frame, columns=("Codigo", "Nombre", "Direccion","Telefono","Fecha de Nacimiento", "Sexo" ,"Edad","Estatura"), style="Treeview", show="headings", height=40)
         tabla_pacientes.heading("Codigo", text="Codigo")
         tabla_pacientes.heading("Nombre", text="Nombre")
@@ -94,12 +110,20 @@ class Pacientes(ctk.CTk):
         tabla_pacientes.heading("Sexo", text="Sexo")
         tabla_pacientes.heading("Edad", text="Edad")
         tabla_pacientes.heading("Estatura", text="Estatura")
+=======
+        tabla_pacientes = ttk.Treeview(self.pacientes_frame, columns=("id", "nombres", "apellidos", "salario"), style="Treeview", show="headings", height=40)
+        tabla_pacientes.heading("id", text="ID")
+        tabla_pacientes.heading("nombres", text="Nombres")
+        tabla_pacientes.heading("apellidos", text="Apellidos")
+        tabla_pacientes.heading("salario", text="Salario")
+>>>>>>> main
 
         for paciente in pacientes:
             tabla_pacientes.insert("", "end", values=paciente)
 
         tabla_pacientes.pack(expand=True, fill="both")
         
+<<<<<<< HEAD
         labelCodigo = ctk.CTkLabel(self.agregar_paciente_frame, text="Codigo", font=("Arial", 14), text_color="black")
         labelCodigo.pack(pady=(5, 5))
         
@@ -206,6 +230,19 @@ class Pacientes(ctk.CTk):
 
 if __name__ == "__main__":
     pacientes = Pacientes(None)
+=======
+        labelNombre = ctk.CTkLabel(self.agregar_paciente_frame, text="Nombre", font=("Arial", 14), text_color="black")
+        labelNombre.place(relx=0.48, rely=0.1, anchor="w")
+        
+        entryNombre = ctk.CTkEntry(self.agregar_paciente_frame, placeholder_text="Nombre paciente", width=200, height=30)
+        entryNombre.place(relx=0.43, rely=0.15, anchor="w")
+
+        boton_prueba = ctk.CTkButton(self.agregar_paciente_frame, text="Botón de prueba")
+        boton_prueba.place(relx=0.45, rely=0.2, anchor="w")
+
+if __name__ == "__main__":
+    pacientes = Pacientes()
+>>>>>>> main
     pacientes.mainloop()
     
     
