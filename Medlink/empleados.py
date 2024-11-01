@@ -41,91 +41,75 @@ class Empleados(ctk.CTk):
 
     def setup_widgets(self):
         
-        header()
-        tab()
-        tabla()
         
-        #---------------------- Encabezado -----------------------------------------------------------------
+        header_frame = ctk.CTkFrame(self, height=90, corner_radius=0, fg_color="#1f6aa5")
+        header_frame.place(relwidth=1.0, relx=0.5, rely=0.0, anchor='n')
         
-        def header(self):
-            header_frame = ctk.CTkFrame(self, height=90, corner_radius=0, fg_color="#1f6aa5")
-            header_frame.place(relwidth=1.0, relx=0.5, rely=0.0, anchor='n')
-            
-            buttonBack = ctk.CTkButton(header_frame, text="Volver", width=100, height=30, fg_color="black", text_color="white", font=("Arial", 14), command=self.back_to_main)
-            buttonBack.place(relx=0.85, rely=0.5, anchor="center")
-            
-            header_label = ctk.CTkLabel(header_frame, text="MedLink", font=("Arial", 24), text_color="white")
-            header_label.place(relx=0.15, rely=0.5, anchor="center")
-            
-            header_label = ctk.CTkLabel(header_frame, text="Empleados", font=("Arial", 34), text_color="white")
-            header_label.place(relx=0.5, rely=0.5, anchor="center")
+        buttonBack = ctk.CTkButton(header_frame, text="Volver", width=100, height=30, fg_color="black", text_color="white", font=("Arial", 14), command=self.back_to_main)
+        buttonBack.place(relx=0.85, rely=0.5, anchor="center")
+        
+        header_label = ctk.CTkLabel(header_frame, text="MedLink", font=("Arial", 24), text_color="white")
+        header_label.place(relx=0.15, rely=0.5, anchor="center")
+        
+        header_label = ctk.CTkLabel(header_frame, text="Empleados", font=("Arial", 34), text_color="white")
+        header_label.place(relx=0.5, rely=0.5, anchor="center")
 
-            logo_label = ctk.CTkLabel(header_frame, image=self.logo_photo, text="")
-            logo_label.place(relheight=1,relx=0.93, rely=0.5, anchor="w")
+        logo_label = ctk.CTkLabel(header_frame, image=self.logo_photo, text="")
+        logo_label.place(relheight=1,relx=0.93, rely=0.5, anchor="w")
+        
+        tabview = ctk.CTkTabview(self,fg_color="white")
+        tabview.place(relx=0.01, rely=0.1, relwidth=0.98, relheight=0.89)
+        
+        tabview.add("Empleados")
+        tabview.add("Agregar Empleado")
+        tabview.add("Eliminar Empleado")
+        tabview.add("Modificar Empleado")
+        
+        self.empleados_frame = ctk.CTkScrollableFrame(tabview.tab("Empleados"), corner_radius=0, fg_color="lightgray",border_width=1,border_color="black")
+        self.empleados_frame.place(relwidth=1, relheight=1)
+        
+        self.agregar_empleado_frame = ctk.CTkFrame(tabview.tab("Agregar Empleado"), corner_radius=0, fg_color="lightgray", border_width=1, border_color="black")
+        self.agregar_empleado_frame.place(relwidth=1, relheight=1)
+        
+        self.eliminar_empleado_frame = ctk.CTkScrollableFrame(tabview.tab("Eliminar Empleado"), corner_radius=0, fg_color="lightgray",border_width=1,border_color="black")
+        self.eliminar_empleado_frame.place(relwidth=1, relheight=1)
+        
+        self.modificar_empleado_frame = ctk.CTkScrollableFrame(tabview.tab("Modificar Empleado"), corner_radius=0, fg_color="lightgray",border_width=1,border_color="black")
+        self.modificar_empleado_frame.place(relwidth=1, relheight=1)
+        
+        while True:
+            try:
+                conn = conecta.conectar()
+                cursor = conn.cursor()
+                cursor.execute("SELECT * FROM empleado")
+                empleados = cursor.fetchall()
+                conn.commit()
+                conn.close()
+                break
+            except Exception as e:
+                print(f"Error al cargar empleados: {e}")
         
         
-        #----------------------- Pestañas -------------------------------------------------------------------
-        def tab(self):
-            tabview = ctk.CTkTabview(self,fg_color="white")
-            tabview.place(relx=0.01, rely=0.1, relwidth=0.98, relheight=0.89)
-                
-            tabview.add("Empleados")
-            tabview.add("Agregar Empleado")
-            tabview.add("Eliminar Empleado")
-            tabview.add("Modificar Empleado")
+        tabla_empleado = ttk.Treeview(self.empleados_frame, columns=("id", "nombres","direccion",'telefono','fecha_nac','sexo','sueldo','turno','contraseña'), style="Treeview", show="headings", height=40)
+        tabla_empleado.heading("id", text="Id")
+        tabla_empleado.heading("nombres", text="Nombres")
+        tabla_empleado.heading("direccion", text="Direccion")
+        tabla_empleado.heading("telefono", text="Telefono")
+        tabla_empleado.heading("fecha_nac", text="Fecha Nacimiento")
+        tabla_empleado.heading("sexo", text="Sexo")
+        tabla_empleado.heading("sueldo", text="Sueldo")
+        tabla_empleado.heading("turno", text="Turno")
+        tabla_empleado.heading("contraseña", text="Contraseña")
+        while True:
+            try:
+                for empleado in empleados:
+                    tabla_empleado.insert("", "end", values=empleado)
+                break
+            except Exception as e:
+                print(f"Error al cargar empleados: {e}")
             
-            self.empleados_frame = ctk.CTkScrollableFrame(tabview.tab("Empleados"), corner_radius=0, fg_color="lightgray",border_width=1,border_color="black")
-            self.empleados_frame.place(relwidth=1, relheight=1)
-            
-            self.agregar_empleado_frame = ctk.CTkFrame(tabview.tab("Agregar Empleado"), corner_radius=0, fg_color="lightgray", border_width=1, border_color="black")
-            self.agregar_empleado_frame.place(relwidth=1, relheight=1)
-            
-            self.eliminar_empleado_frame = ctk.CTkScrollableFrame(tabview.tab("Eliminar Empleado"), corner_radius=0, fg_color="lightgray",border_width=1,border_color="black")
-            self.eliminar_empleado_frame.place(relwidth=1, relheight=1)
-            
-            self.modificar_empleado_frame = ctk.CTkScrollableFrame(tabview.tab("Modificar Empleado"), corner_radius=0, fg_color="lightgray",border_width=1,border_color="black")
-            self.modificar_empleado_frame.place(relwidth=1, relheight=1)
+        tabla_empleado.pack(expand=True, fill="both")
         
-        #---------------------- Tabla --------------------------------------------------------------------
-        
-        def tabla(self):
-            while True:
-                try:
-                    conn = conecta.conectar()
-                    cursor = conn.cursor()
-                    cursor.execute("SELECT * FROM empleado")
-                    empleados = cursor.fetchall()
-                    conn.commit()
-                    conn.close()
-                    break
-                except Exception as e:
-                    print(f"Error al cargar empleados: {e}")
-            
-            
-            tabla_empleado = ttk.Treeview(self.empleados_frame, columns=("id", "nombres","direccion",'telefono','fecha_nac','sexo','sueldo','turno','contraseña'), style="Treeview", show="headings", height=40)
-            tabla_empleado.heading("id", text="Id")
-            tabla_empleado.heading("nombres", text="Nombres")
-            tabla_empleado.heading("direccion", text="Direccion")
-            tabla_empleado.heading("telefono", text="Telefono")
-            tabla_empleado.heading("fecha_nac", text="Fecha Nacimiento")
-            tabla_empleado.heading("sexo", text="Sexo")
-            tabla_empleado.heading("sueldo", text="Sueldo")
-            tabla_empleado.heading("turno", text="Turno")
-            tabla_empleado.heading("contraseña", text="Contraseña")
-            while True:
-                try:
-                    for empleado in empleados:
-                        tabla_empleado.insert("", "end", values=empleado)
-                    break
-                except Exception as e:
-                    print(f"Error al cargar empleados: {e}")
-                
-            tabla_empleado.pack(expand=True, fill="both")
-            
-        #-----------------alta empleado-------------------------------------------------------------------------
-        
-        def
-            
         labelId = ctk.CTkLabel(self.agregar_empleado_frame, text="Id", font=("Arial", 14), text_color="black")
         labelId.pack(pady=(5, 5))
         
