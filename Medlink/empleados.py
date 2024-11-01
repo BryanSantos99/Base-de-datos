@@ -71,6 +71,7 @@ class Empleados(ctk.CTk):
         
         self.agregar_empleado_frame = ctk.CTkFrame(tabview.tab("Agregar Empleado"), corner_radius=0, fg_color="lightgray", border_width=1, border_color="black")
         self.agregar_empleado_frame.place(relwidth=1, relheight=1)
+
         
         self.eliminar_empleado_frame = ctk.CTkScrollableFrame(tabview.tab("Eliminar Empleado"), corner_radius=0, fg_color="lightgray",border_width=1,border_color="black")
         self.eliminar_empleado_frame.place(relwidth=1, relheight=1)
@@ -107,7 +108,9 @@ class Empleados(ctk.CTk):
                     tabla_empleado.insert("", "end", values=empleado)
                 break
             except Exception as e:
+
                 messagebox.showerror("Error", "Al cargar datos")
+
                 print(f"Error al cargar empleados: {e}")
             
         tabla_empleado.pack(expand=True, fill="both")
