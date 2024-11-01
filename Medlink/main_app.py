@@ -7,15 +7,10 @@ import doctores
 import citas
 
 class MainApp(ctk.CTk):
-<<<<<<< HEAD
     def __init__(self,nombre):
         super().__init__()
         self.nombre=nombre
-=======
-    def __init__(self):
-        super().__init__()
 
->>>>>>> main
         ctk.set_appearance_mode("system")
         ctk.set_default_color_theme("blue")
 
