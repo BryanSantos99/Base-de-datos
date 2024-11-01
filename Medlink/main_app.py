@@ -50,7 +50,7 @@ class MainApp(ctk.CTk):
         header_label.place(relx=0.15, rely=0.5, anchor="center")
         
 
-        header_label = ctk.CTkLabel(header_frame, text=f"bienvenido(a) ,{self.nombre}", font=("Arial", 34), text_color="white")
+        header_label = ctk.CTkLabel(header_frame, text=f"bienvenido(a) ,{self.nombre}", font=("Arial", 20), text_color="white")
         header_label.place(relx=0.5, rely=0.5, anchor="center")
 
         logo_label = ctk.CTkLabel(header_frame, image=self.logo_photo, text="")

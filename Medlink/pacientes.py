@@ -174,7 +174,7 @@ class Pacientes(ctk.CTk):
                     messagebox.showerror("Error", "Formato de fecha inválido. Debe ser AAAA-MM-DD")
                     return
                 cursor.execute("""  
-                INSERT INTO doctor 
+                INSERT INTO paciente 
                 (codigo, nombre, direccion, telefono, fecha_nac, sexo, edad, estatura) 
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 """, (
@@ -190,7 +190,7 @@ class Pacientes(ctk.CTk):
                 conn.commit()
                 conn.close()
                 
-                messagebox.showinfo("Exito", "Doctor agregado correctamente")
+                messagebox.showinfo("Exito", "Paciente agregado correctamente")
                 self.entryCodigo.delete(0, "end")
                 self.entryNombre.delete(0, "end")
                 self.entryDireccion.delete(0, "end")
@@ -200,7 +200,7 @@ class Pacientes(ctk.CTk):
                 self.entryEdad.delete(0, "end")
                 self.entryEstatura.delete(0, "end")
             except Exception as e:
-                messagebox.showerror("Error", f"Error al agregar doctor: {e}")
+                messagebox.showerror("Error", f"Error al agregar Paciente: {e}")
             
         
         
