@@ -1,0 +1,85 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+.contenedor {
+  
+  margin-top: 5rem;
+  padding: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+h1 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+table {
+  margin-top: 1rem;
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th,td {
+  padding: 20px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+th {
+  background-color: gray;
+}
+
+.botonCrear,
+.boton,
+button.boton {
+  display: inline-block;
+  padding: 10px 20px;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  margin-top: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.botonCrear {
+  background-color: #007bff;
+}
+
+.boton,
+button.boton {
+  background-color: #4CAF50;
+}
+
+.boton:hover,
+.botonCrear:hover,
+button.boton:hover {
+  opacity: 0.9;
+}
+
+.boton-editar,
+button.boton-editar { 
+  background-color: #2196F3; 
+}
+
+.boton-eliminar,
+button.boton-eliminar { 
+  background-color: #f44336; 
+}
+
+.registro {
+  text-align: right;
+  margin-top: 20px;
+}
+.botonCrear:hover {
+  background-color: #007bff;
+  color: #fff;
+}

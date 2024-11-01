@@ -6,9 +6,10 @@ from tkinter import ttk, messagebox
 from datetime import datetime
 
 class Empleados(ctk.CTk):
-    def __init__(self):
+    def __init__(self,nombre):
         super().__init__()
-
+        
+        self.nombre=nombre
         ctk.set_appearance_mode("system")
         ctk.set_default_color_theme("blue")
 
@@ -36,7 +37,7 @@ class Empleados(ctk.CTk):
     
     def back_to_main(self):
         self.destroy()
-        main_app.MainApp()
+        main_app.MainApp(self.nombre)
         
 
     def setup_widgets(self):
@@ -70,6 +71,7 @@ class Empleados(ctk.CTk):
         
         self.agregar_empleado_frame = ctk.CTkFrame(tabview.tab("Agregar Empleado"), corner_radius=0, fg_color="lightgray", border_width=1, border_color="black")
         self.agregar_empleado_frame.place(relwidth=1, relheight=1)
+
         
         self.eliminar_empleado_frame = ctk.CTkScrollableFrame(tabview.tab("Eliminar Empleado"), corner_radius=0, fg_color="lightgray",border_width=1,border_color="black")
         self.eliminar_empleado_frame.place(relwidth=1, relheight=1)
@@ -106,6 +108,9 @@ class Empleados(ctk.CTk):
                     tabla_empleado.insert("", "end", values=empleado)
                 break
             except Exception as e:
+
+                messagebox.showerror("Error", "Al cargar datos")
+
                 print(f"Error al cargar empleados: {e}")
             
         tabla_empleado.pack(expand=True, fill="both")
@@ -224,6 +229,8 @@ class Empleados(ctk.CTk):
                     self.entryContrasena.delete(0, "end")
                     
             except Exception as e:
+                messagebox.showerror("Error", "En la operacion")
+
                 print(f"Error al agregar empleado: {e}")
 
     

@@ -2,6 +2,9 @@
 import customtkinter as ctk
 from PIL import Image, ImageTk
 import main_app
+import conecta
+from tkinter import messagebox
+
 
 class LoginApp(ctk.CTk):
     def __init__(self):
@@ -24,9 +27,6 @@ class LoginApp(ctk.CTk):
 
         self.geometry(f"{window_width}x{window_height}+{center_x}+{center_y}")
         self.resizable(False, False)
-
-        self.user = "admin"
-        self.correct_password = "12345"
 
         try:
             self.logo_image = Image.open("img/logo.png").resize((60, 60))
@@ -78,15 +78,32 @@ class LoginApp(ctk.CTk):
     def button_event(self):
         entered_password = self.psw_entry.get()
         entered_admin = self.usr_entry.get()
-        if entered_admin == self.user and entered_password == self.correct_password:
-            print("log in")
-            self.open_main_app()
-        else:
-            print("datos incorrectos")
+        try:
+            conn = conecta.conectar()
+            cursor = conn.cursor()
+            cursor.execute(f"SELECT nombre contrasena FROM empleado WHERE contraseña = '{entered_password}' and nombre ='{entered_admin}'")
+            empleado = cursor.fetchall()
+            nombre = empleado[0][0][0::1]
+            conn.commit()
+            conn.close()
+            
+            
+        except Exception as e:
+            print(f"Error : {e}")
+        try:
+            if empleado or entered_admin==""or entered_password=="":
+                print("log in")
+                self.open_main_app(nombre)
+            else:
+                messagebox.showerror("Datos del usuario incorrecto")
+        except Exception as e:
+                messagebox.showerror("Datos del usuario incorrecto")
 
-    def open_main_app(self):
+
+
+    def open_main_app(self,n):
         self.destroy()
-        mainApp = main_app.MainApp()
+        mainApp = main_app.MainApp(n)
         mainApp.mainloop()
 
     def cancel_event(self):
