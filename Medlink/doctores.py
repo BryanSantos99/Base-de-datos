@@ -5,9 +5,9 @@ import conecta
 from tkinter import ttk, messagebox
 from datetime import datetime
 class Doctores(ctk.CTk):
-    def __init__(self):
+    def __init__(self,nombre):
         super().__init__()
-
+        self.nombre=nombre
         ctk.set_appearance_mode("system")
         ctk.set_default_color_theme("blue")
 
@@ -28,7 +28,7 @@ class Doctores(ctk.CTk):
 
     def back_to_main(self):
         self.destroy()
-        main_app.MainApp()
+        main_app.MainApp(self.nombre)
 
     def setup_widgets(self):
         header_frame = ctk.CTkFrame(self, height=90, corner_radius=0, fg_color="#1f6aa5")

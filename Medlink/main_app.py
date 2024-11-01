@@ -80,19 +80,19 @@ class MainApp(ctk.CTk):
     
     def abrir_pacientes(self):
         self.destroy()
-        pacientes.Pacientes()
+        pacientes.Pacientes(self.nombre)
         
     def abrir_empleados(self):
         self.destroy()
-        empleados.Empleados()
+        empleados.Empleados(self.nombre)
     
     def abrir_doctores(self):
         self.destroy()
-        doctores.Doctores()
+        doctores.Doctores(self.nombre)
         
     def abrir_citas(self):
         self.destroy()
-        citas.Citas()
+        citas.Citas(self.nombre)
         
 
 if __name__ == "__main__":

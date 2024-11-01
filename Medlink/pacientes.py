@@ -2,14 +2,17 @@ import customtkinter as ctk
 from PIL import Image, ImageTk
 import main_app
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk ,messagebox
 import conecta
+from datetime import datetime
 
 
 class Pacientes(ctk.CTk):
-    def __init__(self):
+    def __init__(self,nombre):
         super().__init__()
 
+        self.nombre=nombre
+        
         ctk.set_appearance_mode("system")
         ctk.set_default_color_theme("blue")
 
@@ -33,7 +36,7 @@ class Pacientes(ctk.CTk):
         
     def back_to_main(self):
         self.destroy()
-        main_app.MainApp()
+        main_app.MainApp(self.nombre)
         
 
     def setup_widgets(self):
@@ -82,28 +85,127 @@ class Pacientes(ctk.CTk):
         
         
 
-        tabla_pacientes = ttk.Treeview(self.pacientes_frame, columns=("id", "nombres", "apellidos", "salario"), style="Treeview", show="headings", height=40)
-        tabla_pacientes.heading("id", text="ID")
-        tabla_pacientes.heading("nombres", text="Nombres")
-        tabla_pacientes.heading("apellidos", text="Apellidos")
-        tabla_pacientes.heading("salario", text="Salario")
+        tabla_pacientes = ttk.Treeview(self.pacientes_frame, columns=("Codigo", "Nombre", "Direccion","Telefono","Fecha de Nacimiento", "Sexo" ,"Edad","Estatura"), style="Treeview", show="headings", height=40)
+        tabla_pacientes.heading("Codigo", text="Codigo")
+        tabla_pacientes.heading("Nombre", text="Nombre")
+        tabla_pacientes.heading("Direccion", text="Direccion")
+        tabla_pacientes.heading("Telefono", text="Telefono")
+        tabla_pacientes.heading("Fecha de Nacimiento", text="Fecha De Nacimiente")
+        tabla_pacientes.heading("Sexo", text="Sexo")
+        tabla_pacientes.heading("Edad", text="Edad")
+        tabla_pacientes.heading("Estatura", text="Estatura")
 
         for paciente in pacientes:
             tabla_pacientes.insert("", "end", values=paciente)
 
         tabla_pacientes.pack(expand=True, fill="both")
         
-        labelNombre = ctk.CTkLabel(self.agregar_paciente_frame, text="Nombre", font=("Arial", 14), text_color="black")
-        labelNombre.place(relx=0.48, rely=0.1, anchor="w")
+        labelCodigo = ctk.CTkLabel(self.agregar_paciente_frame, text="Codigo", font=("Arial", 14), text_color="black")
+        labelCodigo.pack(pady=(5, 5))
         
-        entryNombre = ctk.CTkEntry(self.agregar_paciente_frame, placeholder_text="Nombre paciente", width=200, height=30)
-        entryNombre.place(relx=0.43, rely=0.15, anchor="w")
+        self.entryCodigo = ctk.CTkEntry(self.agregar_paciente_frame, placeholder_text="Codigo", width=200, height=30)
+        self.entryCodigo.pack(pady=5)
+        
+        labelNombre = ctk.CTkLabel(self.agregar_paciente_frame, text="Nombre", font=("Arial", 14), text_color="black")
+        labelNombre.pack(pady=(5, 5))
+        
+        self.entryNombre = ctk.CTkEntry(self.agregar_paciente_frame, placeholder_text="Nombre empleado", width=200, height=30)
+        self.entryNombre.pack(pady=5)
+        
+        labelDireccion = ctk.CTkLabel(self.agregar_paciente_frame, text="Direccion", font=("Arial", 14), text_color="black")
+        labelDireccion.pack(pady=(5, 5))
+        
+        self.entryDireccion = ctk.CTkEntry(self.agregar_paciente_frame, placeholder_text="Direccion", width=200, height=30)
+        self.entryDireccion.pack(pady=5)
+        
+        
+        labelTelefono = ctk.CTkLabel(self.agregar_paciente_frame, text="Telefono", font=("Arial", 14), text_color="black")
+        labelTelefono.pack(pady=(5, 5))
+        
+        self.entryTelefono = ctk.CTkEntry(self.agregar_paciente_frame, placeholder_text="Telefono", width=200, height=30)
+        self.entryTelefono.pack(pady=5)
+        
+        
+        labelFecha = ctk.CTkLabel(self.agregar_paciente_frame, text="Fecha Nacimiento", font=("Arial", 14), text_color="black")
+        labelFecha.pack(pady=(5, 5))
+        
+        
+        self.entryFecha = ctk.CTkEntry(self.agregar_paciente_frame, placeholder_text="AAAA-MM-DD", width=200, height=30)
+        self.entryFecha.pack(pady=5)
+        
+        labelSexo = ctk.CTkLabel(self.agregar_paciente_frame, text="Sexo", font=("Arial", 14), text_color="black")
+        labelSexo.pack(pady=(5, 5))
+        
+        self.entrySexo = ctk.CTkEntry(self.agregar_paciente_frame, placeholder_text="F/M", width=200, height=30)
+        self.entrySexo.pack(pady=5)
 
-        boton_prueba = ctk.CTkButton(self.agregar_paciente_frame, text="Botón de prueba")
-        boton_prueba.place(relx=0.45, rely=0.2, anchor="w")
+        
+        labelEdad = ctk.CTkLabel(self.agregar_paciente_frame, text="Edad", font=("Arial", 14), text_color="black")
+        labelEdad.pack(pady=(5, 5))
+        
+        self.entryEdad = ctk.CTkEntry(self.agregar_paciente_frame, placeholder_text="Edad", width=200, height=30)
+        self.entryEdad.pack(pady=5)
+        
+        labelEstatura = ctk.CTkLabel(self.agregar_paciente_frame, text="Estatura", font=("Arial", 14), text_color="black")
+        labelEstatura.pack(pady=(5, 5))
+        
+        self.entryEstatura = ctk.CTkEntry(self.agregar_paciente_frame, placeholder_text="Estatura", width=200, height=30)
+        self.entryEstatura.pack(pady=5)
+        
+        
+        botonEnviar = ctk.CTkButton(self.agregar_paciente_frame, text="Agregar",command=self.agregar_doctor)
+        botonEnviar.pack(pady=10)
+        
+    def agregar_doctor(self):
+        if (self.entryCodigo.get() == "" or self.entryNombre.get() == "" or self.entryDireccion.get() == "" or 
+            self.entryTelefono.get() == "" or self.entryFecha.get() == "" or 
+            self.entrySexo.get() == "" or self.entryEdad.get() == "" or 
+            self.entryEstatura.get() == ""):
+            messagebox.showerror("Error", "Todos los campos son obligatorios")
+            return
+        else:
+            conn = conecta.conectar()
+            cursor = conn.cursor() 
+            try:
+                try:
+                    fecha_nac = datetime.strptime(self.entryFecha.get(), "%Y-%m-%d")
+                except ValueError:
+                    messagebox.showerror("Error", "Formato de fecha inválido. Debe ser AAAA-MM-DD")
+                    return
+                cursor.execute("""  
+                INSERT INTO doctor 
+                (codigo, nombre, direccion, telefono, fecha_nac, sexo, edad, estatura) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                """, (
+                self.entryCodigo.get(),
+                self.entryNombre.get(), 
+                self.entryDireccion.get(), 
+                self.entryTelefono.get(),
+                fecha_nac, 
+                self.entrySexo.get(), 
+                self.entryEdad.get(), 
+                self.entryEstatura.get()
+                ))
+                conn.commit()
+                conn.close()
+                
+                messagebox.showinfo("Exito", "Doctor agregado correctamente")
+                self.entryCodigo.delete(0, "end")
+                self.entryNombre.delete(0, "end")
+                self.entryDireccion.delete(0, "end")
+                self.entryTelefono.delete(0, "end")
+                self.entryFecha.delete(0, "end")
+                self.entrySexo.delete(0, "end")
+                self.entryEdad.delete(0, "end")
+                self.entryEstatura.delete(0, "end")
+            except Exception as e:
+                messagebox.showerror("Error", f"Error al agregar doctor: {e}")
+            
+        
+        
 
 if __name__ == "__main__":
-    pacientes = Pacientes()
+    pacientes = Pacientes(None)
     pacientes.mainloop()
     
     

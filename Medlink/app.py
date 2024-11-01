@@ -3,6 +3,7 @@ import customtkinter as ctk
 from PIL import Image, ImageTk
 import main_app
 import conecta
+from tkinter import messagebox
 
 class LoginApp(ctk.CTk):
     def __init__(self):
@@ -82,18 +83,22 @@ class LoginApp(ctk.CTk):
             cursor = conn.cursor()
             cursor.execute(f"SELECT nombre contrasena FROM empleado WHERE contraseña = '{entered_password}' and nombre ='{entered_admin}'")
             empleado = cursor.fetchall()
-            nombre = empleado[0][0]
+            nombre = empleado[0][0][0::1]
             conn.commit()
             conn.close()
             
+            
         except Exception as e:
-            print(f"Error al cargar empleados: {e}")
-        
-        if empleado:
-            print("log in")
-            self.open_main_app(nombre)
-        else:
-            print("datos incorrectos")
+            print(f"Error : {e}")
+        try:
+            if empleado or entered_admin==""or entered_password=="":
+                print("log in")
+                self.open_main_app(nombre)
+            else:
+                messagebox.showerror("Datos del usuario incorrecto")
+        except Exception as e:
+                messagebox.showerror("Datos del usuario incorrecto")
+
 
 
     def open_main_app(self,n):
