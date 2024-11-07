@@ -1,7 +1,8 @@
 
 import customtkinter as ctk
 from PIL import Image, ImageTk
-import main_app
+import admin
+import empleadosadmin
 import conecta
 from tkinter import messagebox
 
@@ -76,35 +77,55 @@ class LoginApp(ctk.CTk):
         ctk.set_appearance_mode(new_appearance_mode)
     
     def button_event(self):
-        entered_password = self.psw_entry.get()
-        entered_admin = self.usr_entry.get()
-        try:
+       
+        nombre_usuario=""
+    
+        entered_psw = self.psw_entry.get()
+        entered_user = self.usr_entry.get()
+
+        admin="admin"
+        con="12345"
+
+        if entered_user == admin and entered_psw == con:
+            nombre_usuario="admin"
+            rol="A"
+            self.open_main_app(nombre_usuario,rol)
+        else:
             conn = conecta.conectar()
             cursor = conn.cursor()
-            cursor.execute(f"SELECT nombre contrasena FROM empleado WHERE contraseña = '{entered_password}' and nombre ='{entered_admin}'")
-            empleado = cursor.fetchall()
-            nombre = empleado[0][0][0::1]
-            conn.commit()
-            conn.close()
+        
+            cursor.execute("SELECT nombre FROM empleado WHERE codigo=%s AND contraseña=%s", (int(entered_user), entered_psw))
+            resultado = cursor.fetchone()
+
             
-            
-        except Exception as e:
-            print(f"Error : {e}")
-        try:
-            if empleado or entered_admin==""or entered_password=="":
-                print("log in")
-                self.open_main_app(nombre)
+            if resultado:
+                nombre_usuario = resultado[0]
+                rol="E"
+                self.mostrar_pantalla_empleado(nombre_usuario,rol)
+                
             else:
-                messagebox.showerror("Datos del usuario incorrecto")
-        except Exception as e:
-                messagebox.showerror("Datos del usuario incorrecto")
+                cursor.execute("SELECT nombre FROM doctor WHERE codigo=%s AND contraseña=%s", (int(entered_user), entered_psw))
+                resultado = cursor.fetchone()
+                if resultado:
+                    nombre_usuario = resultado[0]
+                    rol="E"
+                    self.mostrar_pantalla_empleado(nombre_usuario,rol)
+                else:
+                    messagebox.showerror("Error", "Usuario o contraseña incorrectos")
+
+            cursor.close()
+            
 
 
-
-    def open_main_app(self,n):
+    def open_main_app(self,n,r):
         self.destroy()
-        mainApp = main_app.MainApp(n)
+        mainApp = admin.MainApp(n,r)
         mainApp.mainloop()
+        
+    def mostrar_pantalla_empleado(self,n,r):
+        self.destroy()
+        empleadoApp = empleadosadmin.MainApp(n,r)
+        empleadoApp.mainloop()
 
     def cancel_event(self):
         print("datos borrados")

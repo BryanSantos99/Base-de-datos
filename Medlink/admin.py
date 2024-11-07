@@ -7,9 +7,10 @@ import doctores
 import citas
 
 class MainApp(ctk.CTk):
-    def __init__(self,nombre):
+    def __init__(self,nombre,rol):
         super().__init__()
         self.nombre=nombre
+        self.rol=rol
 
         ctk.set_appearance_mode("system")
         ctk.set_default_color_theme("blue")
@@ -82,19 +83,19 @@ class MainApp(ctk.CTk):
     
     def abrir_pacientes(self):
         self.destroy()
-        pacientes.Pacientes(self.nombre)
+        pacientes.Pacientes(self.nombre,self.rol)
         
     def abrir_empleados(self):
         self.destroy()
-        empleados.Empleados(self.nombre)
+        empleados.Empleados(self.nombre,self.rol)
     
     def abrir_doctores(self):
         self.destroy()
-        doctores.Doctores(self.nombre)
+        doctores.Doctores(self.nombre,self.rol)
         
     def abrir_citas(self):
         self.destroy()
-        citas.Citas(self.nombre)
+        citas.Citas(self.nombre,self.rol)
 
         
 
