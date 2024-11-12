@@ -102,7 +102,7 @@ class Citas(ctk.CTk):
 
         
     def get_available_hours(self):
-        return [f"{hour:02}:00" for hour in range(8, 19)]  # 8 AM to 6 PM
+        return [f"{hour:02}:00" for hour in range(9, 21)]
 
     def agregar_cita(self):
         paciente_id = self.entryPaciente.get().strip()
@@ -117,8 +117,8 @@ class Citas(ctk.CTk):
         conn = conecta.conectar()
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT 1 FROM cita WHERE fecha = %s AND hora = %s
-        """, (fecha, hora))
+            SELECT 1 FROM cita WHERE fecha = %s AND hora = %s AND doctor_id = %s
+        """, (fecha, hora,medico_id))
         if cursor.fetchone():
             messagebox.showerror("Error", "La hora seleccionada ya está ocupada.")
             conn.close()
@@ -145,7 +145,7 @@ class Citas(ctk.CTk):
     def clear_input_fields(self):
         self.entryPaciente.delete(0, "end")
         self.entryMedico.delete(0, "end")
-        self.hour_combobox.set("S2")
+        self.hour_combobox.set("Seleccionar hora")
 
     # Modificar Cita Tab
     def create_tab_modificar_cita(self):
@@ -202,14 +202,20 @@ class Citas(ctk.CTk):
                 conn.commit()
                 messagebox.showinfo("Éxito", "Cita modificada correctamente")
                 
-                self.entryCodigoModificar.delete(0, "end")
+                codigo.delete(0, "end")
+                self.clear_input_fields_mod()
+                
         except Exception as e:
             messagebox.showerror("Error", f"Error al modificar la cita: {e}")
         finally:
             self.clear_input_fields()
             conn.close()
 
-    # Eliminar Cita Tab
+    def clear_input_fields_mod(self):
+        self.entryPaciente2.delete(0, "end")
+        self.entryMedico2.delete(0, "end")
+        self.hour_combobox2.set("Seleccionar hora")
+        
     def create_tab_eliminar_cita(self):
         eliminar_frame = ctk.CTkFrame(self.tabview.tab("Eliminar Cita"), corner_radius=0, fg_color="lightgray", 
                                       border_width=1, border_color="black")
