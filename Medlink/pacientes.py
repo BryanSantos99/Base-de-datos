@@ -127,7 +127,7 @@ class Pacientes(ctk.CTk):
         )
         
         # Configurar encabezados de columnas
-        for col, col_name in zip(self.tabla_pacientes["columns"], ["Codigo", "Nombre", "Direccion", "Telefono", "Fecha de Nacimiento", "Sexo", "Edad", "Estatura", "Generar PDF"]):
+        for col, col_name in zip(self.tabla_pacientes["columns"], ["Codigo", "Nombre", "Direccion", "Telefono", "Fecha de Nacimiento", "Sexo", "Edad", "Estatura"]):
             self.tabla_pacientes.heading(col, text=col_name)
 
         # Insertar filas de pacientes en el Treeview
@@ -135,43 +135,7 @@ class Pacientes(ctk.CTk):
             paciente_datos = paciente[:-1]  # Datos sin el botón de PDF
             # Insertar el paciente y añadir el botón en la última columna
             self.tabla_pacientes.insert("", "end", values=paciente_datos, tags=("pdf",))
-
-        self.tabla_pacientes.tag_bind("pdf", "<Button-1>", self.generar_pdf)
-
         self.tabla_pacientes.pack()
-
-def generar_pdf(self, event):
-    item = self.tabla_pacientes.selection()[0]  # Obtener el ítem seleccionado
-    paciente_data = self.tabla_pacientes.item(item, "values")  # Obtener los datos del paciente
-    nombre_paciente = paciente_data[1]  # Ejemplo de cómo obtener el nombre
-
-    # Aquí puedes agregar el código para generar el PDF con los datos del paciente
-    # Usando el nombre como ejemplo
-    # genera_pdf_para_paciente(nombre_paciente)
-    print(f"Generando PDF para {nombre_paciente}")
-
-    
-def generar_pdf_por_id(self, event):
-    
-    item_id = self.tabla_pacientes.focus()
-    paciente_data = self.tabla_pacientes.item(item_id, "values")
-
-    if not paciente_data:
-        messagebox.showerror("Error", "No se pudo obtener la información del paciente")
-        return
-
-    
-    paciente_data_dict = {
-        "codigo": paciente_data[0],
-        "nombre": paciente_data[1],
-        "direccion": paciente_data[2],
-        "telefono": paciente_data[3],
-        "fecha_nac": paciente_data[4],
-        "sexo": paciente_data[5],
-        "edad": paciente_data[6],
-        "estatura": paciente_data[7]
-    }
-    self.generar_pdf(paciente_data_dict)
 
 if __name__ == "__main__":
     pacientes = Pacientes(nombre="usuario_demo", rol="A")

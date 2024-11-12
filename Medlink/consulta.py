@@ -2,6 +2,7 @@ import customtkinter as ctk
 from tkcalendar import Calendar
 from tkinter import messagebox, ttk
 import conecta
+import empleadosadmin
 
 class Consultas(ctk.CTk):
     def __init__(self, nombre, rol):
@@ -66,7 +67,7 @@ class Consultas(ctk.CTk):
             print(f"Error al cargar consultas: {e}")
 
     def create_tab_agregar_consulta(self):
-        agregar_frame = ctk.CTkFrame(self.tabview.tab("Agregar Consulta"), corner_radius=0, fg_color="lightgray", 
+        agregar_frame = ctk.CTkScrollableFrame(self.tabview.tab("Agregar Consulta"), corner_radius=0, fg_color="lightgray", 
                                      border_width=1, border_color="black")
         agregar_frame.place(relwidth=1, relheight=1)
         
@@ -84,27 +85,57 @@ class Consultas(ctk.CTk):
         self.calendar = Calendar(agregar_frame, date_pattern="yyyy-mm-dd")
         self.calendar.pack(pady=10)
         
-        # Lista desplegable para seleccionar medicamentos
+        
         ctk.CTkLabel(agregar_frame, text="Seleccione Medicamento:", font=("Arial", 14), text_color="black").pack(pady=10)
         self.medicamento_combobox = ttk.Combobox(agregar_frame, values=self.get_medicamentos())
         self.medicamento_combobox.set("Seleccione Medicamento")
         self.medicamento_combobox.pack(pady=5)
         
+ 
+        boton_agregar_medicamento = ctk.CTkButton(agregar_frame, text="Agregar Medicamento", command=self.agregar_medicamento)
+        boton_agregar_medicamento.pack(pady=10)
+
+    
+        self.lista_medicamentos = ttk.Treeview(agregar_frame, columns=("Medicamento", "Vía"), show="headings", height=5)
+        self.lista_medicamentos.heading("Medicamento", text="Medicamento")
+        self.lista_medicamentos.pack(pady=10)
+
+       
+        boton_eliminar_medicamento = ctk.CTkButton(agregar_frame, text="Eliminar Medicamento", command=self.eliminar_medicamento)
+        boton_eliminar_medicamento.pack(pady=10)
+            
         boton_agregar = ctk.CTkButton(agregar_frame, text="Agregar Consulta", command=self.agregar_consulta)
         boton_agregar.pack(pady=10)
 
+
+    def agregar_medicamento(self):
+        medicamento = self.medicamento_combobox.get().strip()
+
+        if not medicamento or medicamento == "Seleccione Medicamento":
+            messagebox.showerror("Error", "Todos los campos son obligatorios.")
+            return
+
+        self.lista_medicamentos.insert("", "end", values=(medicamento))
+
+    def eliminar_medicamento(self):
+        selected_item = self.lista_medicamentos.selection()
+        if selected_item:
+            self.lista_medicamentos.delete(selected_item)
+        else:
+            messagebox.showerror("Error", "Seleccione un medicamento para eliminar.")
+        
     def get_medicamentos(self):
-        try:
-            conn = conecta.conectar()
-            cursor = conn.cursor()
-            cursor.execute("SELECT nombre FROM medicamento")
-            medicamentos = [med[0] for med in cursor.fetchall()]
-            conn.close()
-            return medicamentos
-        except Exception as e:
-            messagebox.showerror("Error", "Error al cargar medicamentos.")
-            print(f"Error al cargar medicamentos: {e}")
-            return []
+            try:
+                conn = conecta.conectar()
+                cursor = conn.cursor()
+                cursor.execute("SELECT nombre FROM medicamento")
+                medicamentos = [med[0] for med in cursor.fetchall()]
+                conn.close()
+                return medicamentos
+            except Exception as e:
+                messagebox.showerror("Error", "Error al cargar medicamentos.")
+                print(f"Error al cargar medicamentos: {e}")
+                return []
 
     def agregar_consulta(self):
         paciente_id = self.entryPaciente.get().strip()
@@ -138,6 +169,7 @@ class Consultas(ctk.CTk):
 
     def back_to_main(self):
         self.destroy()
+        empleadosadmin.MainApp(self.nombre, self.rol)
 
 if __name__ == "__main__":
     app = Consultas("admin", "A")
