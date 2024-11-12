@@ -111,42 +111,67 @@ class Pacientes(ctk.CTk):
         ctk.CTkButton(self.agregar_paciente_frame, text="Agregar", command=self.agregar_paciente).pack(pady=10)
 
     def agregar_paciente(self):
-        # Validación de campos
-        if any(entry.get() == "" for entry in self.entries.values()):
-            messagebox.showerror("Error", "Todos los campos son obligatorios")
-            return
-
         conn = conecta.conectar()
         cursor = conn.cursor()
-        try:
-            fecha_nac = datetime.strptime(self.entries["fecha nacimiento"].get(), "%Y-%m-%d")
-        except ValueError:
-            messagebox.showerror("Error", "Formato de fecha inválido. Debe ser AAAA-MM-DD")
-            return
+        cursor.execute("SELECT * FROM paciente")
+        pacientes = cursor.fetchall()
+        conn.commit()
+        conn.close()
 
-        try:
-            cursor.execute("""  
-            INSERT INTO paciente 
-            (codigo, nombre, direccion, telefono, fecha_nac, sexo, edad, estatura) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-            """, (
-                self.entries["codigo"].get(),
-                self.entries["nombre"].get(),
-                self.entries["direccion"].get(),
-                self.entries["telefono"].get(),
-                fecha_nac,
-                self.entries["sexo"].get(),
-                self.entries["edad"].get(),
-                self.entries["estatura"].get()
-            ))
-            conn.commit()
-            messagebox.showinfo("Éxito", "Paciente agregado correctamente")
-            for entry in self.entries.values():
-                entry.delete(0, "end")
-        except Exception as e:
-            messagebox.showerror("Error", f"Error al agregar paciente: {e}")
-        finally:
-            conn.close()
+        self.tabla_pacientes = ttk.Treeview(
+            self.pacientes_frame,
+            columns=("Codigo", "Nombre", "Direccion", "Telefono", "Fecha de Nacimiento", "Sexo", "Edad", "Estatura", "Generar PDF"),
+            style="Treeview",
+            show="headings",
+            height=40
+        )
+        
+        # Configurar encabezados de columnas
+        for col, col_name in zip(self.tabla_pacientes["columns"], ["Codigo", "Nombre", "Direccion", "Telefono", "Fecha de Nacimiento", "Sexo", "Edad", "Estatura", "Generar PDF"]):
+            self.tabla_pacientes.heading(col, text=col_name)
+
+        # Insertar filas de pacientes en el Treeview
+        for paciente in pacientes:
+            paciente_datos = paciente[:-1]  # Datos sin el botón de PDF
+            # Insertar el paciente y añadir el botón en la última columna
+            self.tabla_pacientes.insert("", "end", values=paciente_datos, tags=("pdf",))
+
+        self.tabla_pacientes.tag_bind("pdf", "<Button-1>", self.generar_pdf)
+
+        self.tabla_pacientes.pack()
+
+def generar_pdf(self, event):
+    item = self.tabla_pacientes.selection()[0]  # Obtener el ítem seleccionado
+    paciente_data = self.tabla_pacientes.item(item, "values")  # Obtener los datos del paciente
+    nombre_paciente = paciente_data[1]  # Ejemplo de cómo obtener el nombre
+
+    # Aquí puedes agregar el código para generar el PDF con los datos del paciente
+    # Usando el nombre como ejemplo
+    # genera_pdf_para_paciente(nombre_paciente)
+    print(f"Generando PDF para {nombre_paciente}")
+
+    
+def generar_pdf_por_id(self, event):
+    
+    item_id = self.tabla_pacientes.focus()
+    paciente_data = self.tabla_pacientes.item(item_id, "values")
+
+    if not paciente_data:
+        messagebox.showerror("Error", "No se pudo obtener la información del paciente")
+        return
+
+    
+    paciente_data_dict = {
+        "codigo": paciente_data[0],
+        "nombre": paciente_data[1],
+        "direccion": paciente_data[2],
+        "telefono": paciente_data[3],
+        "fecha_nac": paciente_data[4],
+        "sexo": paciente_data[5],
+        "edad": paciente_data[6],
+        "estatura": paciente_data[7]
+    }
+    self.generar_pdf(paciente_data_dict)
 
 if __name__ == "__main__":
     pacientes = Pacientes(nombre="usuario_demo", rol="A")
