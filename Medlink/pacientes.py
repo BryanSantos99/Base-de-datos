@@ -69,7 +69,6 @@ class Pacientes(ctk.CTk):
         tabview.add("Eliminar Paciente")
         tabview.add("Modificar Paciente")
 
-        # Frames for each tab
         self.pacientes_frame = ctk.CTkScrollableFrame(tabview.tab("Pacientes"), corner_radius=0, fg_color="lightgray", border_width=1, border_color="black")
         self.pacientes_frame.place(relwidth=1, relheight=1)
         
