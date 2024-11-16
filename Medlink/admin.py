@@ -5,6 +5,7 @@ import empleados
 import pacientes
 import doctores
 import citas
+import medicamentos
 
 class MainApp(ctk.CTk):
     def __init__(self,nombre,rol):
@@ -63,10 +64,11 @@ class MainApp(ctk.CTk):
         logo_main = ctk.CTkLabel(header_img, image=self.header_photo, text="")
         logo_main.place(relheight=1, rely=0.5, relx=.5, anchor="center")
         
-        self.crear_boton(0.2, 0.4, "Pacientes",self.logo_photo,self.abrir_pacientes)
-        self.crear_boton(0.4, 0.4, "Citas",self.logo_photo,self.abrir_citas)
-        self.crear_boton(0.6, 0.4, "Empleados",self.logo_photo,self.abrir_empleados)
-        self.crear_boton(0.8, 0.4, "Doctores",self.logo_photo,self.abrir_doctores)
+        self.crear_boton(0.1, 0.4, "Pacientes",self.logo_photo,self.abrir_pacientes)
+        self.crear_boton(0.3, 0.4, "Citas",self.logo_photo,self.abrir_citas)
+        self.crear_boton(0.5, 0.4, "Empleados",self.logo_photo,self.abrir_empleados)
+        self.crear_boton(0.7, 0.4, "Doctores",self.logo_photo,self.abrir_doctores)
+        self.crear_boton(0.9, 0.4, "Medicamentos",self.logo_photo,self.abrir_medicamentos)
         self.crear_boton(0.95, 0.16, "Cerrar Sesion",None,self.cerrar_sesion)
 
     def crear_boton(self, x, y, nombre,image,com):
@@ -97,8 +99,11 @@ class MainApp(ctk.CTk):
         self.destroy()
         citas.Citas(self.nombre,self.rol)
 
-        
+    def abrir_medicamentos(self):
+        self.destroy()
+        medicamentos.Medicamento(self.nombre,self.rol)  
 
 if __name__ == "__main__":
     app = MainApp()
     app.mainloop()
+
