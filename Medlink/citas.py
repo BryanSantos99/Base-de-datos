@@ -5,6 +5,7 @@ from datetime import datetime
 import conecta
 import admin
 import empleadosadmin
+import doctoresadmin
 
 class Citas(ctk.CTk):
     def __init__(self, nombre, rol):
@@ -110,6 +111,11 @@ class Citas(ctk.CTk):
         fecha = self.calendar.get_date()
         hora = self.hour_combobox.get().strip()
 
+        
+        if fecha.weekday() >= 5:  
+            messagebox.showerror("Error", "Las citas solo se pueden programar de lunes a viernes.")
+            return
+
         if hora == "Seleccione Hora":
             messagebox.showerror("Error", "Debe seleccionar una hora válida.")
             return
@@ -118,14 +124,13 @@ class Citas(ctk.CTk):
         cursor = conn.cursor()
         cursor.execute("""
             SELECT 1 FROM cita WHERE fecha = %s AND hora = %s AND doctor_id = %s
-        """, (fecha, hora,medico_id))
+        """, (fecha, hora, medico_id))
         if cursor.fetchone():
             messagebox.showerror("Error", "La hora seleccionada ya está ocupada.")
             conn.close()
             return
         conn.close()
 
-        
         conn = conecta.conectar()
         cursor = conn.cursor()
         try:
@@ -254,9 +259,10 @@ class Citas(ctk.CTk):
         self.destroy()
         if self.rol == "A":
             admin.MainApp(self.nombre,self.rol)
-        else:
+        elif self.rol=='E':
             empleadosadmin.MainApp(self.nombre, self.rol)
-
+        else:
+            doctoresadmin.MainApp(self.nombre, self.rol)
 
 if __name__ == "__main__":
     app = Citas("admin", "A")

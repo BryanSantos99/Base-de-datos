@@ -5,6 +5,7 @@ import empleadosadmin
 import conecta
 from tkinter import ttk, messagebox
 from datetime import datetime
+import doctoresadmin
 
 class Doctores(ctk.CTk):
 
@@ -35,14 +36,19 @@ class Doctores(ctk.CTk):
         self.destroy()
         if self.rol == "A":
             admin.MainApp(self.nombre,self.rol)
-        else:
+        elif self.rol == "E":
             empleadosadmin.MainApp(self.nombre, self.rol)
+        else:
+            doctoresadmin.MainApp(self.nombre, self.rol)
 
     def setup_widgets(self):
         self.setup_header()
         self.setup_tabview()
         self.populate_doctors_table()
-        self.setup_add_doctor_form()
+        self.create_tab_eliminar_doctor()
+        self.create_tab_modificar_doctor()
+        self.setup_add_doctor_form() 
+        
 
     def setup_header(self):
         header_frame = ctk.CTkFrame(self, height=90, corner_radius=0, fg_color="#1f6aa5")
@@ -73,6 +79,9 @@ class Doctores(ctk.CTk):
         # Set frames to fill tab space
         for frame in [self.doctores_frame, self.agregar_doctor_frame, self.eliminar_doctor_frame, self.modificar_doctor_frame]:
             frame.place(relwidth=1, relheight=1)
+
+      
+
 
     def populate_doctors_table(self):
         conn = conecta.conectar()
@@ -105,7 +114,7 @@ class Doctores(ctk.CTk):
             label.pack(pady=(5, 5))
             entry = ctk.CTkEntry(self.agregar_doctor_frame, placeholder_text=placeholder, width=200, height=30)
             entry.pack(pady=5)
-            self.entries[label_text.lower()] = entry
+            self.entries[label_text.upper()] = entry
         
         ctk.CTkButton(self.agregar_doctor_frame, text="Agregar", command=self.agregar_doctor).pack(pady=10)
 
@@ -147,6 +156,99 @@ class Doctores(ctk.CTk):
         finally:
             conn.close()
 
+    def create_tab_eliminar_doctor(self):
+       
+        
+        ctk.CTkLabel(self.eliminar_doctor_frame, text="Código del Doctor a eliminar:", font=("Arial", 14), text_color="black").pack(pady=(10, 5))
+        self.entryCodigoEliminar = ctk.CTkEntry(self.eliminar_doctor_frame, placeholder_text="Código", width=200, height=30)
+        self.entryCodigoEliminar.pack(pady=(5, 10))
+
+        boton_eliminar = ctk.CTkButton(self.eliminar_doctor_frame, text="Eliminar Doctor", command=self.eliminar_doctor)
+        boton_eliminar.pack(pady=(10, 20))
+
+    def eliminar_doctor(self):
+        codigo = self.entryCodigoEliminar.get()
+        
+        if not codigo:
+            messagebox.showerror("Error", "Debe ingresar el código del doctor")
+            return
+
+        conn = conecta.conectar()
+        cursor = conn.cursor()
+        try:
+            cursor.execute("DELETE FROM doctor WHERE codigo = %s", (codigo,))
+            if cursor.rowcount == 0:
+                messagebox.showerror("Error", "No se encontró el doctor con el código ingresado.")
+            else:
+                conn.commit()
+                messagebox.showinfo("Éxito", "Doctor eliminado correctamente")
+                self.entryCodigoEliminar.delete(0, "end")
+        except Exception as e:
+            messagebox.showerror("Error", f"Error al eliminar el doctor: {e}")
+        finally:
+            conn.close()
+            
+    def create_tab_modificar_doctor(self):
+        
+        ctk.CTkLabel(self.modificar_doctor_frame, text="Código del Doctor a modificar:", font=("Arial", 14), text_color="black").pack(pady=(10, 5))
+        
+        self.entryCodigoModificar = ctk.CTkEntry(self.modificar_doctor_frame, placeholder_text="Código", width=200, height=30)
+        self.entryCodigoModificar.pack(pady=(5, 10))
+
+        boton_modificar = ctk.CTkButton(self.modificar_doctor_frame, text="Modificar Doctor", command=self.modificar_doctor)
+        boton_modificar.pack(pady=(10, 20))
+        
+        ctk.CTkLabel(self.modificar_doctor_frame, text="Nuevo Nombre:", font=("Arial", 14), text_color="black").pack(pady=(10, 5))
+        self.entryNuevoNombre = ctk.CTkEntry(self.modificar_doctor_frame, placeholder_text="Nuevo Nombre", width=200, height=30)
+        self.entryNuevoNombre.pack(pady=(5, 10))
+
+        ctk.CTkLabel(self.modificar_doctor_frame, text="Nueva Dirección:", font=("Arial", 14), text_color="black").pack(pady=(10, 5))
+        self.entryNuevaDireccion = ctk.CTkEntry(self.modificar_doctor_frame, placeholder_text="Nueva Dirección", width=200, height=30)
+        self.entryNuevaDireccion.pack(pady=(5, 10))
+
+        ctk.CTkLabel(self.modificar_doctor_frame, text="Nuevo Teléfono:", font=("Arial", 14), text_color="black").pack(pady=(10, 5))
+        self.entryNuevoTelefono = ctk.CTkEntry(self.modificar_doctor_frame, placeholder_text="Nuevo Teléfono", width=200, height=30)
+        self.entryNuevoTelefono.pack(pady=(5, 10))
+
+        ctk.CTkLabel(self.modificar_doctor_frame, text="Nueva Especialidad:", font=("Arial", 14), text_color="black").pack(pady=(10, 5))
+        self.entryNuevaEspecialidad = ctk.CTkEntry(self.modificar_doctor_frame, placeholder_text="Nueva Especialidad", width=200, height=30)
+        self.entryNuevaEspecialidad.pack(pady=(5, 10))
+
+        boton_modificar = ctk.CTkButton(self.modificar_doctor_frame, text="Modificar Doctor", command=self.modificar_doctor)
+        boton_modificar.pack(pady=(10, 20))
+
+
+    def modificar_doctor(self):
+        codigo = self.entryCodigoModificar.get()
+        
+        if not codigo:
+            messagebox.showerror("Error", "Debe ingresar el código del doctor")
+            return
+
+        conn = conecta.conectar()
+        cursor = conn.cursor()
+        try:
+            nuevo_nombre = self.entryNuevoNombre.get()
+            nueva_direccion = self.entryNuevaDireccion.get()
+            nuevo_telefono = self.entryNuevoTelefono.get()
+            nueva_especialidad = self.entryNuevaEspecialidad.get()
+
+            cursor.execute("UPDATE doctor SET nombre = %s, direccion = %s, telefono = %s, especialidad = %s WHERE codigo = %s", 
+                           (nuevo_nombre, nueva_direccion, nuevo_telefono, nueva_especialidad, codigo))
+            if cursor.rowcount == 0:
+                messagebox.showerror("Error", "No se encontró el doctor con el código ingresado.")
+            else:
+                conn.commit()
+                messagebox.showinfo("Éxito", "Doctor modificado correctamente")
+                self.entryCodigoModificar.delete(0, "end")
+                self.entryNuevoNombre.delete(0, "end")
+                self.entryNuevaDireccion.delete(0, "end")
+                self.entryNuevoTelefono.delete(0, "end")
+                self.entryNuevaEspecialidad.delete(0, "end")
+        except Exception as e:
+            messagebox.showerror("Error", f"Error al modificar el doctor: {e}")
+        finally:
+            conn.close()
 if __name__ == "__main__":
-    doctores = Doctores(nombre="usuario_demo", rol="A")
+    doctores = Doctores(nombre="Admin", rol="A")
     doctores.mainloop()

@@ -3,6 +3,7 @@ import customtkinter as ctk
 from PIL import Image, ImageTk
 import admin
 import empleadosadmin
+import doctoresadmin
 import conecta
 from tkinter import messagebox
 
@@ -108,8 +109,8 @@ class LoginApp(ctk.CTk):
                 resultado = cursor.fetchone()
                 if resultado:
                     nombre_usuario = resultado[0]
-                    rol="E"
-                    self.mostrar_pantalla_empleado(nombre_usuario,rol)
+                    rol="D"
+                    self.mostrar_pantalla_doctor(nombre_usuario,rol)
                 else:
                     messagebox.showerror("Error", "Usuario o contraseña incorrectos")
 
@@ -126,6 +127,11 @@ class LoginApp(ctk.CTk):
         self.destroy()
         empleadoApp = empleadosadmin.MainApp(n,r)
         empleadoApp.mainloop()
+        
+    def mostrar_pantalla_doctor(self,n,r):
+        self.destroy()
+        doctorApp = doctoresadmin.MainApp(n,r)
+        doctorApp.mainloop()
 
     def cancel_event(self):
         print("datos borrados")
