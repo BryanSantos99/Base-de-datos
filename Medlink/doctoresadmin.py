@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from PIL import Image, ImageTk
 import app
-import pacientes
+import pacientesDoctor
 import citas
 import consulta
 
@@ -53,8 +53,10 @@ class MainApp(ctk.CTk):
         logo_main = ctk.CTkLabel(header_img, image=self.header_photo, text="")
         logo_main.place(relheight=1, rely=0.5, relx=.5, anchor="center")
         
-        self.crear_boton(0.4, 0.4, "Pacientes",self.logo_photo,self.abrir_pacientes)
-        self.crear_boton(0.6, 0.4, "Citas",self.logo_photo,self.abrir_citas)
+        self.crear_boton(0.3, 0.4, "Pacientes",self.logo_photo,self.abrir_pacientes)
+        self.crear_boton(0.5, 0.4, "Citas",self.logo_photo,self.abrir_citas)
+        self.crear_boton(0.7, 0.4, "Consulta",self.logo_photo,self.abrir_consulta)
+
         self.crear_boton(0.95, 0.16, "Cerrar Sesion",None,self.cerrar_sesion)
 
     def crear_boton(self, x, y, nombre,image,com):
@@ -71,12 +73,15 @@ class MainApp(ctk.CTk):
     
     def abrir_pacientes(self):
         self.destroy()
-        pacientes.Pacientes(self.nombre,self.rol)
+        pacientesDoctor.Pacientes(self.nombre,self.rol)
         
     def abrir_citas(self):
         self.destroy()
         citas.Citas(self.nombre,self.rol)
         
+    def abrir_consulta(self):
+        self.destroy()
+        consulta.Consultas(self.nombre,self.rol)    
    
     def cerrar_sesion(self):
         print("cerrar sesion")
@@ -86,5 +91,5 @@ class MainApp(ctk.CTk):
         
     
 if __name__ == "__main__":
-    app = MainApp("Empleado", "E")
+    app = MainApp("Doctor", "D")
     app.mainloop()

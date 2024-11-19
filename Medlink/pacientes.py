@@ -6,6 +6,7 @@ from tkinter import ttk, messagebox
 import conecta
 from datetime import datetime
 import empleadosadmin
+import doctoresadmin
 
 class Pacientes(ctk.CTk):
     def __init__(self, nombre, rol):
@@ -39,14 +40,18 @@ class Pacientes(ctk.CTk):
         self.destroy()
         if self.rol == "A":
             admin.MainApp(self.nombre,self.rol)
-        else:
+        elif self.rol=='E':
             empleadosadmin.MainApp(self.nombre, self.rol)
+        else:
+            doctoresadmin.MainApp(self.nombre, self.rol)
 
     def setup_widgets(self):
         self.setup_header()
         self.setup_tabview()
         self.populate_patients_table()
         self.setup_add_patient_form()
+        self.create_tab_eliminar_paciente()
+        self.create_tab_modificar_paciente()
 
     def setup_header(self):
         header_frame = ctk.CTkFrame(self, height=90, corner_radius=0, fg_color="#1f6aa5")
@@ -66,14 +71,21 @@ class Pacientes(ctk.CTk):
 
         tabview.add("Pacientes")
         tabview.add("Agregar Paciente")
-        tabview.add("Eliminar Paciente")
-        tabview.add("Modificar Paciente")
+        tabview.add("Eliminar Paciente")  # Asegúrate de que esta línea esté presente
+        tabview.add("Modificar Paciente")  # Asegúrate de que esta línea esté presente
 
         self.pacientes_frame = ctk.CTkScrollableFrame(tabview.tab("Pacientes"), corner_radius=0, fg_color="lightgray", border_width=1, border_color="black")
         self.pacientes_frame.place(relwidth=1, relheight=1)
         
         self.agregar_paciente_frame = ctk.CTkFrame(tabview.tab("Agregar Paciente"), corner_radius=0, fg_color="lightgray", border_width=1, border_color="black")
         self.agregar_paciente_frame.place(relwidth=1, relheight=1)
+        
+        self.modificar_paciente_frame = ctk.CTkFrame(tabview.tab("Modificar Paciente"), corner_radius=0, fg_color="lightgray", border_width=1, border_color="black")
+        self.modificar_paciente_frame.place(relwidth=1, relheight=1)
+        
+        self.eliminar_paciente_frame = ctk.CTkFrame(tabview.tab("Eliminar Paciente"), corner_radius=0, fg_color="lightgray", border_width=1, border_color="black")
+        self.eliminar_paciente_frame.place(relwidth=1, relheight=1)
+    
 
     def populate_patients_table(self):
         conn = conecta.conectar()
@@ -125,16 +137,100 @@ class Pacientes(ctk.CTk):
             height=40
         )
         
-        # Configurar encabezados de columnas
         for col, col_name in zip(self.tabla_pacientes["columns"], ["Codigo", "Nombre", "Direccion", "Telefono", "Fecha de Nacimiento", "Sexo", "Edad", "Estatura"]):
             self.tabla_pacientes.heading(col, text=col_name)
 
-        # Insertar filas de pacientes en el Treeview
+       
         for paciente in pacientes:
-            paciente_datos = paciente[:-1]  # Datos sin el botón de PDF
-            # Insertar el paciente y añadir el botón en la última columna
+            paciente_datos = paciente[:-1] 
             self.tabla_pacientes.insert("", "end", values=paciente_datos, tags=("pdf",))
         self.tabla_pacientes.pack()
+
+    def create_tab_eliminar_paciente(self):
+        
+        
+        ctk.CTkLabel(self.eliminar_paciente_frame, text="Código del Paciente a eliminar:", font=("Arial", 14), text_color="black").pack(pady=10)
+        self.entryCodigoEliminar = ctk.CTkEntry(self.eliminar_paciente_frame, placeholder_text="Código", width=200, height=30)
+        self.entryCodigoEliminar.pack(pady=10)
+
+        boton_eliminar = ctk.CTkButton(self.eliminar_paciente_frame, text="Eliminar Paciente", command=self.eliminar_paciente)
+        boton_eliminar.pack(pady=10)
+
+    def eliminar_paciente(self):
+        codigo = self.entryCodigoEliminar.get()
+        
+        if not codigo:
+            messagebox.showerror("Error", "Debe ingresar el código del paciente")
+            return
+
+        conn = conecta.conectar()
+        cursor = conn.cursor()
+        try:
+            cursor.execute("DELETE FROM paciente WHERE codigo = %s", (codigo,))
+            if cursor.rowcount == 0:
+                messagebox.showerror("Error", "No se encontró el paciente con el código ingresado.")
+            else:
+                conn.commit()
+                messagebox.showinfo("Éxito", "Paciente eliminado correctamente")
+                self.entryCodigoEliminar.delete(0, "end")
+        except Exception as e:
+            messagebox.showerror("Error", f"Error al eliminar el paciente: {e}")
+        finally:
+            conn.close()
+            
+    def create_tab_modificar_paciente(self):
+       
+        
+        ctk.CTkLabel( self.modificar_paciente_frame, text="Código del Paciente a modificar:", font=("Arial", 14), text_color="black").pack(pady=10)
+        self.entryCodigoModificar = ctk.CTkEntry( self.modificar_paciente_frame, placeholder_text="Código", width=200, height=30)
+        self.entryCodigoModificar.pack(pady=10)
+        
+        ctk.CTkLabel(self.modificar_paciente_frame, text="Nombre:", font=("Arial", 14), text_color="black").pack(pady=10)
+        self.entryNombreModificar = ctk.CTkEntry(self.modificar_paciente_frame, placeholder_text="Nuevo Nombre", width=200, height=30)
+        self.entryNombreModificar.pack(pady=10)
+
+        ctk.CTkLabel(self.modificar_paciente_frame, text="Dirección:", font=("Arial", 14), text_color="black").pack(pady=10)
+        self.entryDireccionModificar = ctk.CTkEntry(self.modificar_paciente_frame, placeholder_text="Nueva Dirección", width=200, height=30)
+        self.entryDireccionModificar.pack(pady=10)
+
+        ctk.CTkLabel(self.modificar_paciente_frame, text="Teléfono:", font=("Arial", 14), text_color="black").pack(pady=10)
+        self.entryTelefonoModificar = ctk.CTkEntry(self.modificar_paciente_frame, placeholder_text="Nuevo Teléfono", width=200, height=30)
+        self.entryTelefonoModificar.pack(pady=10)
+
+
+        boton_modificar = ctk.CTkButton( self.modificar_paciente_frame, text="Modificar Paciente", command=self.modificar_paciente)
+        boton_modificar.pack(pady=10)
+
+    def modificar_paciente(self):
+        codigo = self.entryCodigoModificar.get()
+        
+        if not codigo:
+            messagebox.showerror("Error", "Debe ingresar el código del paciente")
+            return
+
+        conn = conecta.conectar()
+        cursor = conn.cursor()
+        try:
+            nuevo_nombre = self.entryNombreModificar.get()
+            nueva_direccion = self.entryDireccionModificar.get()
+            nuevo_telefono = self.entryTelefonoModificar.get()
+
+            # Actualizar todos los campos necesarios
+            cursor.execute("UPDATE paciente SET nombre = %s, direccion = %s, telefono = %s WHERE codigo = %s", 
+                           (nuevo_nombre, nueva_direccion, nuevo_telefono, codigo))
+            if cursor.rowcount == 0:
+                messagebox.showerror("Error", "No se encontró el paciente con el código ingresado.")
+            else:
+                conn.commit()
+                messagebox.showinfo("Éxito", "Paciente modificado correctamente")
+                self.entryCodigoModificar.delete(0, "end")
+                self.entryNombreModificar.delete(0, "end")
+                self.entryDireccionModificar.delete(0, "end")
+                self.entryTelefonoModificar.delete(0, "end")
+        except Exception as e:
+            messagebox.showerror("Error", f"Error al modificar el paciente: {e}")
+        finally:
+            conn.close()
 
 if __name__ == "__main__":
     pacientes = Pacientes(nombre="usuario_demo", rol="A")

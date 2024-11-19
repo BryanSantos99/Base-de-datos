@@ -6,6 +6,7 @@ import empleadosadmin
 from fpdf import FPDF
 from datetime import datetime
 import random
+import doctoresadmin
 
 class Consultas(ctk.CTk):
     def __init__(self, nombre, rol):
@@ -76,18 +77,9 @@ class Consultas(ctk.CTk):
         
         ctk.CTkLabel(agregar_frame, text="Crear consulta:", font=("Arial", 14), text_color="black").pack(pady=10)
         
-        ctk.CTkLabel(agregar_frame, text="Id paciente:", font=("Arial", 14), text_color="black").pack(pady=10)
-        self.entryPaciente = ctk.CTkEntry(agregar_frame, placeholder_text="ID Paciente", width=200, height=30)
-        self.entryPaciente.pack(pady=5)
-        
-        ctk.CTkLabel(agregar_frame, text="Id Doctor:", font=("Arial", 14), text_color="black").pack(pady=10)
-        self.entryMedico = ctk.CTkEntry(agregar_frame, placeholder_text="ID Médico", width=200, height=30)
-        self.entryMedico.pack(pady=5)
-        
-        ctk.CTkLabel(agregar_frame, text="Fecha de la Consulta:", font=("Arial", 14), text_color="black").pack(pady=10)
-        self.calendar = Calendar(agregar_frame, date_pattern="yyyy-mm-dd")
-        self.calendar.pack(pady=10)
-        
+        ctk.CTkLabel(agregar_frame, text="Id De la cita:", font=("Arial", 14), text_color="black").pack(pady=10)
+        self.entryCita = ctk.CTkEntry(agregar_frame, placeholder_text="ID Paciente", width=200, height=30)
+        self.entryCita.pack(pady=5)
         
         ctk.CTkLabel(agregar_frame, text="Seleccione Medicamento:", font=("Arial", 14), text_color="black").pack(pady=10)
         self.medicamento_combobox = ttk.Combobox(agregar_frame, values=self.get_medicamentos())
@@ -148,14 +140,33 @@ class Consultas(ctk.CTk):
                 return []
 
     def agregar_consulta(self):
-        paciente_id = self.entryPaciente.get().strip()
-        medico_id = self.entryMedico.get().strip()
-        fecha = self.calendar.get_date()
+        cita = self.entryCita.get()
+        try:
+            conn = conecta.conectar()
+            cursor = conn.cursor()
+            cursor.execute(f"SELECT * FROM cita WHERE id_cita = {cita}")
+            datos_cita = cursor.fetchone()
+            print(cita)
+            conn.close()
+
+            if datos_cita:
+                paciente_id = datos_cita[1]
+                medico_id = datos_cita[2]
+                fecha = datos_cita[3]
+                hora = datos_cita[4]
+            else:
+                messagebox.showerror("Error", "Paciente no encontrado.")
+                return
+        except Exception as e:
+            messagebox.showerror("Error", "Error al cargar datos del paciente.")
+            print(f"Error al cargar datos del paciente: {e}")
+            return
+        
         medicamento = self.medicamento_combobox.get()
         medicamentos = [self.lista_medicamentos.item(item, 'values')[0] for item in self.lista_medicamentos.get_children()]
         print(medicamentos)
         meds=""
-        if not paciente_id or not medico_id or medicamento == "Seleccione Medicamento":
+        if not cita or medicamento == "Seleccione Medicamento":
             messagebox.showerror("Error", "Todos los campos son obligatorios.")
             return
         for med in medicamentos:
@@ -174,17 +185,15 @@ class Consultas(ctk.CTk):
         except Exception as e:
             messagebox.showerror("Error", f"Error al agregar la consulta: {e}")
         finally:
-            self.generar_factura()
+            self.generar_factura(paciente_id,medico_id,fecha,hora)
             conn.close()
             self.clear_input_fields()
         
        
 
         
-    def generar_factura(self):
-        paciente_id = self.entryPaciente.get().strip()
-        medico_id = self.entryMedico.get().strip()
-        fecha = self.calendar.get_date()
+    def generar_factura(self,p,me,f,h):
+        
         medicamentos = [self.lista_medicamentos.item(item, 'values')[0] for item in self.lista_medicamentos.get_children()]
         meds=[]
         try:
@@ -202,11 +211,11 @@ class Consultas(ctk.CTk):
                 messagebox.showerror("Error", "Error al cargar medicamentos.")
                 print(f"Error al cargar medicamentos: {e}")
 
-        # Obtener datos del paciente de la base de datos
+  
         try:
             conn = conecta.conectar()
             cursor = conn.cursor()
-            cursor.execute(f"SELECT nombre FROM paciente WHERE codigo = {paciente_id}")
+            cursor.execute(f"SELECT nombre FROM paciente WHERE codigo = {p}")
             datos_paciente = cursor.fetchone()
             conn.close()
 
@@ -222,7 +231,7 @@ class Consultas(ctk.CTk):
         try:
             conn = conecta.conectar()
             cursor = conn.cursor()
-            cursor.execute(f"SELECT nombre FROM doctor WHERE codigo = {medico_id}")
+            cursor.execute(f"SELECT nombre FROM doctor WHERE codigo = {me}")
             datos_doctor = cursor.fetchone()
             conn.close()
 
@@ -246,10 +255,11 @@ class Consultas(ctk.CTk):
 
         pdf.set_xy(10, 10)
         pdf.set_font('Arial', size=12)
-        pdf.cell(0, 10, 'MEDICAL CARE', ln=True)
+        pdf.cell(0, 10, 'La salud es lo primero', ln=True)
         pdf.cell(0, 10, 'Calle #N30 CP 21020', ln=True)
         pdf.cell(0, 10, 'B32312312', ln=True)
-        pdf.cell(0, 10, f'Fecha: {fecha}', ln=True)
+        pdf.cell(0, 10, f'Fecha: {f}', ln=True)
+        pdf.cell(0, 10, f'Hora: {h}', ln=True)
 
         pdf.ln(10)
 
@@ -284,19 +294,21 @@ class Consultas(ctk.CTk):
         pdf.cell(0, 10, '================================================', ln=True, align='L')
         pdf.cell(0, 10, 'Que se alivie pronto!', ln=True, align='C')
 
-        # Cambia 'ruta/especifica/' por la ruta donde deseas guardar el PDF
         pdf_file = f'recetas/Factura_{nombre_cliente+str(identificador_factura)}.pdf'
         pdf.output(pdf_file, 'F')
 
     def clear_input_fields(self):
-        self.entryPaciente.delete(0, "end")
-        self.entryMedico.delete(0, "end")
+        self.entryCita.delete(0, "end")
         self.medicamento_combobox.set("Seleccione Medicamento")
         self.lista_medicamentos.delete(*self.lista_medicamentos.get_children())
 
     def back_to_main(self):
         self.destroy()
-        empleadosadmin.MainApp(self.nombre, self.rol)
+        if self.rol=='E':
+            empleadosadmin.MainApp(self.nombre, self.rol)
+        else:
+            doctoresadmin.MainApp(self.nombre, self.rol)
+
 
 if __name__ == "__main__":
     app = Consultas("admin", "A")
