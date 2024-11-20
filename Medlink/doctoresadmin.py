@@ -4,6 +4,7 @@ import app
 import pacientesDoctor
 import citas
 import consulta
+import citasDoctor
 
 class MainApp(ctk.CTk):
     def __init__(self,nombre,rol):
@@ -77,7 +78,7 @@ class MainApp(ctk.CTk):
         
     def abrir_citas(self):
         self.destroy()
-        citas.Citas(self.nombre,self.rol)
+        citasDoctor.Citas(self.nombre,self.rol)
         
     def abrir_consulta(self):
         self.destroy()
