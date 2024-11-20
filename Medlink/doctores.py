@@ -7,6 +7,7 @@ from tkinter import ttk, messagebox
 from datetime import datetime
 import doctoresadmin
 
+
 class Doctores(ctk.CTk):
 
     def __init__(self, nombre, rol):

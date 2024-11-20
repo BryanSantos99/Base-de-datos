@@ -1,3 +1,10 @@
+#equipo 6
+#Santos Garcia Bryan Alejandro
+#Sosa Godinez Luis Gustavo
+#Torres Buenrostro Zaira Patricia
+#Torres Nieves Eduardo
+#Vazquez Mendoza David Fernando
+#Seccion D03,Calendario 2024B
 import customtkinter as ctk
 from tkcalendar import Calendar
 from tkinter import messagebox, ttk
@@ -108,11 +115,12 @@ class Citas(ctk.CTk):
     def agregar_cita(self):
         paciente_id = self.entryPaciente.get().strip()
         medico_id = self.entryMedico.get().strip()
-        fecha = self.calendar.get_date()
+        fecha_str = self.calendar.get_date()
+        fecha = datetime.strptime(fecha_str, "%Y-%m-%d").date()
         hora = self.hour_combobox.get().strip()
-
         
-        if fecha.weekday() >= 5:  
+        
+        if datetime.weekday(fecha) in [5, 6]:  
             messagebox.showerror("Error", "Las citas solo se pueden programar de lunes a viernes.")
             return
 

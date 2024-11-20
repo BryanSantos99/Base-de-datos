@@ -284,7 +284,7 @@ class Consultas(ctk.CTk):
         pdf.cell(0, 10, 'Detalles de la consulta', ln=True, align='L')
         pdf.cell(160, 10, 'Nombre del Medicamento | via de Administracion | Tipo presentacion :', border=1,ln=True)
 
-      
+    
         for m in meds:
             strr=" | ".join(m)
             pdf.cell(160,10,strr, border=1, ln=True)
