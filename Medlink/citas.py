@@ -1,3 +1,10 @@
+#equipo 6
+#Santos Garcia Bryan Alejandro
+#Sosa Godinez Luis Gustavo
+#Torres Buenrostro Zaira Patricia
+#Torres Nieves Eduardo
+#Vazquez Mendoza David Fernando
+#Seccion D03,Calendario 2024B
 import customtkinter as ctk
 from tkcalendar import Calendar
 from tkinter import messagebox, ttk
